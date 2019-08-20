@@ -5,8 +5,8 @@
   "license": "MIT",
   "repository": "https://github.com/lateralstudio/isy-analytics-client",
   "author": {
-      "name": "Lateral Studio",
-      "email": "admin@lateralstudio.ch"
+    "name": "Lateral Studio",
+    "email": "admin@lateralstudio.ch"
   },
   "main": "index.js",
   "scripts": {
