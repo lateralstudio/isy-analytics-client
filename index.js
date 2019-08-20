@@ -1,18 +1,22 @@
 const http = require("http");
+const https = require("https");
 
 const logOptions = {
-    host: "192.168.99.80",
-    port: 1337,
     path: "/log",
     method: "PUT"
-}
+};
 
 const getAggregationsOptions = {
-    host: "192.168.99.80",
-    port: 1337,
     path: "/getAggregations",
     method: "PUT"
-}
+};
+
+const getHttp = ({ useHttp }) => {
+    if (useHttp) {
+        return http;
+    }
+    return https;
+};
 
 function makeClient(params) {
     return {
@@ -24,8 +28,12 @@ function makeClient(params) {
                     appKey: params.appKey
                 }
             };
-            const req = http.request(logOptions);
-            req.on("error", (err) => {
+            const req = getHttp(params).request({
+                host: params.host,
+                port: params.port,
+                ...logOptions
+            });
+            req.on("error", err => {
                 console.log(`Request error: ${err.message}`);
             });
             req.write(JSON.stringify(log));
@@ -33,16 +41,23 @@ function makeClient(params) {
         },
 
         getAggregations(query, callback) {
-            const req = http.request(getAggregationsOptions, (res) => {
-                let responseString = "";
-                res.on("data", data => {
-                    responseString += data;
-                });
-                res.on("end", () => {
-                    callback(JSON.parse(responseString));
-                });
-            });
-            req.on("error", (err) => {
+            const req = getHttp(params).request(
+                {
+                    host: params.host,
+                    port: params.port,
+                    ...getAggregationsOptions
+                },
+                res => {
+                    let responseString = "";
+                    res.on("data", data => {
+                        responseString += data;
+                    });
+                    res.on("end", () => {
+                        callback(JSON.parse(responseString));
+                    });
+                }
+            );
+            req.on("error", err => {
                 console.log(`Request error: ${err.message}`);
             });
             const data = {
@@ -53,14 +68,14 @@ function makeClient(params) {
             req.write(JSON.stringify(data));
             req.end();
         }
-    }
+    };
 }
 
 class IsyAnalyticsClient {
     constructor(params) {
         const client = makeClient(params);
         this.log = client.log;
-        this.getAggregations = client.getAggregations
+        this.getAggregations = client.getAggregations;
     }
 }
 
