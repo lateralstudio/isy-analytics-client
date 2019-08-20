@@ -58,15 +58,9 @@ function makeClient(params) {
 
 class IsyAnalyticsClient {
     constructor(params) {
-        this.client = makeClient(params);
-    }
-
-    log(event) {
-        this.client.log(event);
-    }
-
-    getAggregations(query, callback) {
-        this.client.getAggregations(query, callback);
+        const client = makeClient(params);
+        this.log = client.log;
+        this.getAggregations = client.getAggregations
     }
 }
 
