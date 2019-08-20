@@ -21,7 +21,7 @@ function makeClient(params) {
                 writeKey: params.writeKey,
                 event: {
                     ...event,
-                    appKey
+                    appKey: params.appKey
                 }
             };
             const req = http.request(logOptions);
