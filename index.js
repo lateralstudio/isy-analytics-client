@@ -20,7 +20,7 @@ const getHttp = ({ useHttp }) => {
 
 function makeClient(params) {
     return {
-        log(event) {
+        log: async event => {
             const log = {
                 writeKey: params.writeKey,
                 event: {
@@ -30,7 +30,7 @@ function makeClient(params) {
             };
             const req = getHttp(params).request({
                 host: params.host,
-                port: params.port,
+                port: params.port || undefined,
                 ...logOptions
             });
             req.on("error", err => {
